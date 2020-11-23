@@ -1,0 +1,116 @@
+syntax = "proto3";
+option java_multiple_files = true;
+import "google/protobuf/empty.proto";
+package com.orlovsky.mooc_platform.grpc;
+
+message UUID {
+  string value = 1;
+}
+
+message Author {
+  UUID id = 1;
+  string firstName = 2;
+  string lastName = 3;
+  string description = 4;
+}
+
+message Student {
+  UUID id = 1;
+  string firstName = 2;
+  string lastName = 3;
+  string description = 4;
+}
+
+message TestStepOption {
+  UUID id = 1;
+  string optionText = 2;
+  bool isCorrect = 3;
+}
+
+message StudentProgressItem {
+  UUID id = 1;
+  UUID student = 2;
+  UUID course = 3;
+  UUID passedEducationalStep = 4;
+  UUID passedTestStep = 5;
+  UUID chosenOption = 6;
+}
+
+message TestStep {
+  UUID id = 1;
+  UUID course = 2;
+  string descriptionUri = 3;
+  repeated TestStepOption answers = 4;
+  int32 score = 5;
+  int32 position = 6;
+  repeated StudentProgressItem studentProgressItems = 7;
+}
+
+message AuthorDto {
+  UUID id = 1;
+  string firstName = 2;
+  string lastName = 3;
+  string description = 4;
+}
+
+message StudentDto {
+  UUID id = 1;
+  string firstName = 2;
+  string lastName = 3;
+  string description = 4;
+}
+
+message AuthorUpdate {
+  UUID authorId = 1;
+  AuthorDto updateData = 2;
+}
+
+message StudentUpdate {
+  UUID studentId = 1;
+  StudentDto updateData = 2;
+}
+
+
+message ListOfStudents {
+  repeated Student values = 1;
+}
+
+message ListOfAuthors {
+  repeated Author values = 1;
+}
+
+service AccountService {
+  //  CRUD
+  //  C
+  rpc signUpStudent(StudentDto) returns (Student);
+  rpc signUpAuthor(AuthorDto) returns (Author);
+  //  R
+  rpc getStudentById(UUID) returns (Student);
+  rpc getAuthorById(UUID) returns (Author);
+  rpc getAllStudents(google.protobuf.Empty) returns (ListOfStudents);
+  rpc getAllAuthors(google.protobuf.Empty) returns (ListOfAuthors);
+  //  U
+  rpc updateStudent(StudentUpdate) returns (google.protobuf.Empty);
+  rpc updateAuthor(AuthorUpdate) returns (google.protobuf.Empty);
+  //  D
+  rpc deleteStudentById(UUID) returns (google.protobuf.Empty);
+  rpc deleteAuthorById(UUID) returns (google.protobuf.Empty);
+}
+
+service EducationalMaterialService {
+  //  CRUD
+  //  C
+  rpc signUpStudent(Student) returns (StudentDto);
+  rpc signUpAuthor(Author) returns (AuthorDto);
+  //  R
+  rpc getStudentById(UUID) returns (StudentDto);
+  rpc getAuthorById(UUID) returns (Student);
+  rpc getAllStudents(google.protobuf.Empty) returns (ListOfStudents);
+  rpc getAllAuthors(google.protobuf.Empty) returns (ListOfAuthors);
+  //  U
+  rpc updateStudent(StudentUpdate) returns (StudentDto);
+  rpc updateAuthor(AuthorUpdate) returns (AuthorDto);
+  //  D
+  rpc deleteStudentById(UUID) returns (google.protobuf.Empty);
+  rpc deleteAuthorById(UUID) returns (google.protobuf.Empty);
+}

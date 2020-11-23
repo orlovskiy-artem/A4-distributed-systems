@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.19.0 (f63a961c)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: course-progress-service
+  name: course-progress-service
+spec:
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.19.0 (f63a961c)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: course-progress-service
+    spec:
+      containers:
+      - env:
+        - name: DB_SERVER
+          value: postgresqldb-course-progress
+        - name: POSTGRES_DB
+          value: course-progress
+        - name: POSTGRES_PASSWORD
+          value: postgres
+        - name: POSTGRES_USER
+          value: postgres
+        image: artiseasy/course-progress-service:latest
+        name: course-progress-service
+        ports:
+        - containerPort: 8110
+        resources: {}
+      restartPolicy: Always
+  selector:
+    matchLabels:
+      io.kompose.service: course-progress-service
+status: {}

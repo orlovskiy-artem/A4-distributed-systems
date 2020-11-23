@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: mediator
+  name: mediator
+spec:
+  replicas: 2
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: mediator
+    spec:
+      containers:
+        - image: artiseasy/mediator:latest
+          name: mediator
+          ports:
+            - containerPort: 8080
+          resources: {}
+      restartPolicy: Always
+  selector:
+    matchLabels:
+      app: mediator
+status: {}

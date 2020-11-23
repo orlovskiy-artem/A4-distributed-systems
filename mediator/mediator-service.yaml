@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: mediator
+  name: mediator
+spec:
+  type:  LoadBalancer
+  ports:
+    - port: 8080
+      targetPort: 8080
+      nodePort: 30162
+      protocol: TCP
+  selector:
+    app: mediator

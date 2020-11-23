@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.19.0 (f63a961c)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: educational-material-service
+  name: educational-material-service
+spec:
+  type: LoadBalancer
+  ports:
+         - port: 8100
+           targetPort: 8100
+           nodePort: 30164
+           protocol: TCP
+  selector:
+    io.kompose.service: educational-material-service
+    #status:
+    #loadBalancer: {}

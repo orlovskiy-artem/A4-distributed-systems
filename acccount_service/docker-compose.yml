@@ -1,0 +1,34 @@
+version: '3.1'
+services:
+  postgresqldb-account:
+    network_mode: bridge
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=accounts
+    volumes:
+      - postgres-data-account:/home/art/postgres_microservices/account_service
+  account-service:
+    network_mode: bridge
+    container_name: account-service
+    image: artiseasy/account-service:latest
+    build: ./
+    expose:
+      - 8090
+    ports:
+      - "8090:8090"
+    depends_on:
+      - postgresqldb-account
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=accounts
+      - DB_SERVER=postgresqldb-account
+    links:
+      - postgresqldb-account
+
+volumes:
+  postgres-data-account:

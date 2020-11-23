@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.19.0 (f63a961c)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: postgresqldb-account
+  name: postgresqldb-account
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.19.0 (f63a961c)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: postgresqldb-account
+    spec:
+      containers:
+      - env:
+        - name: POSTGRES_DB
+          value: accounts
+        - name: POSTGRES_PASSWORD
+          value: postgres
+        - name: POSTGRES_USER
+          value: postgres
+        image: postgres
+        name: postgresqldb
+        ports:
+        - containerPort: 5432
+        resources: {}
+        volumeMounts:
+        - mountPath: /home/art/postgres_microservices/account_service
+          name: postgres-data-account
+      restartPolicy: Always
+      volumes:
+      - name: postgres-data-account
+        persistentVolumeClaim:
+          claimName: postgres-data-account
+  selector:
+          matchLabels:
+            io.kompose.service: postgresqldb-account
+status: {}

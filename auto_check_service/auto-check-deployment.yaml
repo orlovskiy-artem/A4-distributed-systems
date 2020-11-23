@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    io.kompose.service: auto-check-service
+  name: auto-check-service
+spec:
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.19.0 (f63a961c)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: auto-check-service
+    spec:
+      containers:
+        - image: artiseasy/auto-check-service:latest
+          name: auto-check-service
+          ports:
+            - containerPort: 8120
+      restartPolicy: Always
+  selector:
+    matchLabels:
+      io.kompose.service: auto-check-service
