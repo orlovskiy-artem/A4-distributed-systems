@@ -1,8 +1,5 @@
 package com.orlovsky.mooc_platform.service.grpc;
 
-//import io.github.lognet
-
-import com.google.protobuf.Descriptors;
 import com.google.protobuf.Empty;
 import com.orlovsky.mooc_platform.dto.AuthorDTO;
 import com.orlovsky.mooc_platform.dto.StudentDTO;
@@ -13,34 +10,29 @@ import org.lognet.springboot.grpc.GRpcService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.stream.Collectors;
-
 @GRpcService
 @Service
 public class GrpcAccountService extends AccountServiceGrpc.AccountServiceImplBase {
 
     @Autowired
     private AccountService accountService;
-
+    private final GrpcMapper grpcMapper = new GrpcMapper();
 //    CRUD
 //    Create
     @Override
     public void signUpStudent(StudentDto request, StreamObserver<Student> responseObserver) {
-        StudentDTO studentDTO = grpcToJavaStudentDto(request);
+        StudentDTO studentDTO = grpcMapper.grpcToJavaStudentDto(request);
         com.orlovsky.mooc_platform.model.Student student = accountService.signUpStudent(studentDTO);
-        Student.Builder response = javaStudentToGrpcStudentBuilder(student);
-        responseObserver.onNext(response.build());
+        Student response = grpcMapper.javaStudentToGrpcStudentBuilder(student).build();
+        responseObserver.onNext(response);
         responseObserver.onCompleted();
     }
 
     @Override
     public void signUpAuthor(AuthorDto request, StreamObserver<Author> responseObserver) {
-        AuthorDTO authorDTO = grpcToJavaAuthorDto(request);
+        AuthorDTO authorDTO = grpcMapper.grpcToJavaAuthorDto(request);
         com.orlovsky.mooc_platform.model.Author author = accountService.signUpAuthor(authorDTO);
-        Author response = javaToGrpcAuthor(author);
+        Author response = grpcMapper.javaAuthorToGrpcAuthorBuilder(author).build();
         responseObserver.onNext(response);
         responseObserver.onCompleted();
     }
@@ -49,17 +41,19 @@ public class GrpcAccountService extends AccountServiceGrpc.AccountServiceImplBas
 //    Read
     @Override
     public void getAuthorById(UUID request, StreamObserver<Author> responseObserver) {
-        com.orlovsky.mooc_platform.model.Author author = accountService.getAuthorById(grpcToJavaUuid(request));
-        Author response = javaToGrpcAuthor(author);
+        com.orlovsky.mooc_platform.model.Author author = accountService.getAuthorById(
+                grpcMapper.grpcToJavaUuid(request));
+        Author response = grpcMapper.javaAuthorToGrpcAuthorBuilder(author).build();
         responseObserver.onNext(response);
         responseObserver.onCompleted();
     }
 
     @Override
     public void getStudentById(UUID request, StreamObserver<Student> responseObserver) {
-        com.orlovsky.mooc_platform.model.Student student = accountService.getStudentById(grpcToJavaUuid(request));
-        Student.Builder response = javaStudentToGrpcStudentBuilder(student);
-        responseObserver.onNext(response.build());
+        com.orlovsky.mooc_platform.model.Student student = accountService.getStudentById(
+                grpcMapper.grpcToJavaUuid(request));
+        Student response = grpcMapper.javaStudentToGrpcStudentBuilder(student).build();
+        responseObserver.onNext(response);
         responseObserver.onCompleted();
     }
 
@@ -67,16 +61,11 @@ public class GrpcAccountService extends AccountServiceGrpc.AccountServiceImplBas
     public void getAllAuthors(Empty request, StreamObserver<ListOfAuthors> responseObserver) {
         ListOfAuthors.Builder responseBuilder = ListOfAuthors.newBuilder();
         for (com.orlovsky.mooc_platform.model.Author author : accountService.getAllAuthors()) {
-            responseBuilder.addValues(javaToGrpcAuthor(author));
+            responseBuilder.addValues(
+                    grpcMapper.javaAuthorToGrpcAuthorBuilder(author).build()
+            );
         }
         ListOfAuthors response = responseBuilder.build();
-//        ListOfAuthors response = ListOfAuthors
-//                .newBuilder()
-//                .addAllValues(
-//                        .stream()
-//                        .map(k->javaToGrpcAuthor(k))
-//                        .collect(Collectors.toList()))
-//                .build();
         responseObserver.onNext(response);
         responseObserver.onCompleted();
     }
@@ -86,40 +75,21 @@ public class GrpcAccountService extends AccountServiceGrpc.AccountServiceImplBas
 
         ListOfStudents.Builder responseBuilder = ListOfStudents.newBuilder();
         for (com.orlovsky.mooc_platform.model.Student student : accountService.getAllStudents()) {
-            System.out.println(student.toString());
-            System.out.println(student.getClass().toString());
             responseBuilder.addValues(
-                    Student.newBuilder()
-                            .setId(UUID.newBuilder().setValue(student.getId().toString()))
-                            .setFirstName(student.getFirstName())
-                            .setLastName(student.getLastName())
-                            .setDescription(student.getDescription())
+                    grpcMapper.javaStudentToGrpcStudentBuilder(student).build()
             );
         }
-//        for
-//        ListOfStudents listOfStudents = ListOfStudents.newBuilder().addAllValues(studentList);
-
-//        ListOfStudents response = ListOfStudents
-//                .newBuilder()
-//                .addAllValues(accountService
-//                        .getAllStudents()
-//                        .stream()
-//                        .map(k->javaStudentToGrpcStudentBuilder(k).build())
-//                        .collect(Collectors.toList()))
-//                .build();
         ListOfStudents response = responseBuilder.build();
         responseObserver.onNext(response);
         responseObserver.onCompleted();
     }
 
 //    Update
-
-
     @Override
     public void updateAuthor(AuthorUpdate request, StreamObserver<Empty> responseObserver) {
         accountService.updateAuthor(
-                    grpcToJavaUuid(request.getAuthorId()),
-                    grpcToJavaAuthorDto(request.getUpdateData()));
+                grpcMapper.grpcToJavaUuid(request.getAuthorId()),
+                grpcMapper.grpcToJavaAuthorDto(request.getUpdateData()));
         responseObserver.onNext(Empty.newBuilder().build());
         responseObserver.onCompleted();
     }
@@ -127,8 +97,8 @@ public class GrpcAccountService extends AccountServiceGrpc.AccountServiceImplBas
     @Override
     public void updateStudent(StudentUpdate request, StreamObserver<Empty> responseObserver) {
         accountService.updateStudent(
-                grpcToJavaUuid(request.getStudentId()),
-                grpcToJavaStudentDto(request.getUpdateData()));
+                grpcMapper.grpcToJavaUuid(request.getStudentId()),
+                grpcMapper.grpcToJavaStudentDto(request.getUpdateData()));
         responseObserver.onNext(Empty.newBuilder().build());
         responseObserver.onCompleted();
     }
@@ -137,57 +107,16 @@ public class GrpcAccountService extends AccountServiceGrpc.AccountServiceImplBas
 //    Delete
     @Override
     public void deleteAuthorById(UUID request, StreamObserver<Empty> responseObserver) {
-        accountService.deleteAuthorById(grpcToJavaUuid(request));
+        accountService.deleteAuthorById(grpcMapper.grpcToJavaUuid(request));
         responseObserver.onNext(Empty.newBuilder().build());
         responseObserver.onCompleted();
     }
 
     @Override
     public void deleteStudentById(UUID request, StreamObserver<Empty> responseObserver) {
-        accountService.deleteStudentById(grpcToJavaUuid(request));
+        accountService.deleteStudentById(grpcMapper.grpcToJavaUuid(request));
         responseObserver.onNext(Empty.newBuilder().build());
         responseObserver.onCompleted();
-    }
-
-    //    Mappers (convertors)
-    public java.util.UUID grpcToJavaUuid(UUID uuid){
-        return java.util.UUID.fromString(uuid.getValue());
-    }
-    public UUID javaToGrpcUuid(java.util.UUID uuid) {
-        return UUID.newBuilder().setValue(uuid.toString()).build();
-    }
-
-    public Student.Builder javaStudentToGrpcStudentBuilder(com.orlovsky.mooc_platform.model.Student student){
-        return Student.newBuilder()
-                .setId(UUID.newBuilder().setValue(student.getId().toString()))
-                .setFirstName(student.getFirstName())
-                .setLastName(student.getLastName())
-                .setDescription(student.getDescription());
-    }
-    public Author javaToGrpcAuthor(com.orlovsky.mooc_platform.model.Author author){
-        return Author.newBuilder()
-                .setId(UUID.newBuilder().setValue(author.getId().toString()).build())
-                .setFirstName(author.getFirstName())
-                .setLastName(author.getLastName())
-                .setDescription(author.getDescription())
-                .build();
-    }
-
-    public StudentDTO grpcToJavaStudentDto(StudentDto studentDto) {
-        return new StudentDTO(
-                null,
-                studentDto.getFirstName(),
-                studentDto.getLastName(),
-                studentDto.getDescription()
-        );
-    }
-    public AuthorDTO grpcToJavaAuthorDto(AuthorDto authorDto) {
-        return new AuthorDTO(
-                null,
-                authorDto.getFirstName(),
-                authorDto.getLastName(),
-                authorDto.getDescription()
-        );
     }
 
 }
