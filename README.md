@@ -1,4 +1,4 @@
-# A3-distributed-systems
+# A4-distributed-systems
 
 MOOC platform: Microservices 
 
@@ -12,6 +12,6 @@ Also, you should specify your folder for database mountPath in postgres-deployme
 To check if it works correctly, please execute this command in terminal to forward port from mediator pod 
 (ports are same, name of pod you should get by command "kubectl get pods")
 ```bash
-kubectl port-forward mediator-79dcd7b49f-4lr7j 8080:8080
+kubectl port-forward mediator-79dcd7b49f-4lr7j 8080:8080 10000:10000
 ```
 Then, start the client application and it will run correctly.
