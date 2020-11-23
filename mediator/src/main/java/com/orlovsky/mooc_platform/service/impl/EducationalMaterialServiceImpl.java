@@ -1,5 +1,6 @@
 package com.orlovsky.mooc_platform.service.impl;
 
+import com.google.gson.Gson;
 import com.orlovsky.mooc_platform.dto.CourseDTO;
 import com.orlovsky.mooc_platform.dto.EducationalStepDTO;
 import com.orlovsky.mooc_platform.dto.TestStepDTO;
@@ -17,12 +18,15 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 import java.util.MissingResourceException;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class EducationalMaterialServiceImpl implements EducationalMaterialService {
 
     RestTemplate restTemplate = new RestTemplate();
     private static final String educationalMaterialServiceUrl = "http://educational-material-service:8100";
+    //    Line for debug mode outside kubernetes
+//    private static final String educationalMaterialServiceUrl = "http://172.17.0.2:30164";
 
     // CRUD
     // Create
@@ -80,7 +84,11 @@ public class EducationalMaterialServiceImpl implements EducationalMaterialServic
         ResponseEntity<List> response = restTemplate.getForEntity(educationalMaterialServiceUrl + "/courses",List.class);
         if(response.getStatusCode().is5xxServerError()) throw new ResponseStatusException(response.getStatusCode(),"Educational material service error");
         if(response.getStatusCode().is4xxClientError()) throw new ResponseStatusException(response.getStatusCode(),"Mediator has failed");
-        return response.getBody();
+        return (List<Course>) response.getBody().stream().map(course-> {
+            Gson gson = new Gson();
+            Course courseParsed  = gson.fromJson(course.toString(),Course.class);
+            return courseParsed;
+        }).collect(Collectors.toList());
     }
 
 

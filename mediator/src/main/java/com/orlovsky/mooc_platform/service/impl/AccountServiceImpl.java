@@ -25,7 +25,8 @@ public class AccountServiceImpl implements AccountService {
 
     RestTemplate restTemplate = new RestTemplate();
     private static final String accountServiceUrl = "http://account-service:8090";
-
+    //    Line for debug mode outside kubernetes
+//    private static final String accountServiceUrl = "http://172.17.0.2:30163";
     // CRUD
     // Create
     @Override

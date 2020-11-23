@@ -15,6 +15,8 @@ import java.util.UUID;
 public class CourseProgressServiceImpl implements CourseProgressService {
     RestTemplate restTemplate = new RestTemplate();
     private static final String courseProgressServiceUrl = "http://course-progress-service:8110";
+//    Line for debug mode outside kubernetes
+//    private static final String courseProgressServiceUrl = "http://172.17.0.2:30165";
 
     @Override
     public void signUpUser(UUID courseId,
