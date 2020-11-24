@@ -246,3 +246,29 @@ service EducationalMaterialService {
   rpc deleteAuthorById(DeleteAuthorOnCourseRequest) returns (google.protobuf.Empty);
   rpc deleteCourse(DeleteCourseRequest) returns (google.protobuf.Empty);
 }
+
+// CourseProgressService
+message SignUpUserRequest {
+  UUID courseId = 1;
+  UUID studentId = 2;
+}
+message MakePassedEducationalStepRequest {
+  UUID courseId = 1;
+  UUID studentId = 2;
+  UUID educationalStepId = 3;
+}
+message MakeProcessedTestStepRequest {
+  UUID courseId = 1;
+  UUID studentId = 2;
+  UUID testStepId = 3;
+  TestStepOptionDto chosenAnswer = 4;
+}
+message MakeProcessedTestStepResponse{
+  bool value = 1;
+}
+
+service CourseProgressService {
+  rpc signUpUser(SignUpUserRequest) returns (google.protobuf.Empty);
+  rpc makePassedEducationalStep(MakePassedEducationalStepRequest) returns (google.protobuf.Empty);
+  rpc makeProcessedTestStep(MakeProcessedTestStepRequest) returns (MakeProcessedTestStepResponse);
+}

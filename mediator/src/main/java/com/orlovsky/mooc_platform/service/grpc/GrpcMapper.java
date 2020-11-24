@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 public class GrpcMapper {
 //    UUID
     public java.util.UUID grpcToJavaUuid(UUID uuid){
-        System.out.println(uuid.getValue());
         return java.util.UUID.fromString(uuid.getValue());
     }
 
@@ -293,44 +292,11 @@ public class GrpcMapper {
                 testStepOptionRequestDto.getIsCorrect()
         );
     }
-    
+
+    public MakeProcessedTestStepResponse convertToGetMakeProcessedTestStepResponse(Boolean isCorrect) {
+        if (isCorrect==null) {
+            return MakeProcessedTestStepResponse.newBuilder().setValue(false).build();
+        }
+        return MakeProcessedTestStepResponse.newBuilder().setValue(isCorrect).build();
+    }
 }
-//    //    Mappers (convertors)
-//    public java.util.UUID grpcToJavaUuid(UUID uuid){
-//        return java.util.UUID.fromString(uuid.getValue());
-//    }
-//    public UUID javaToGrpcUuid(java.util.UUID uuid) {
-//        return UUID.newBuilder().setValue(uuid.toString()).build();
-//    }
-//
-//    public Student.Builder javaStudentToGrpcStudentBuilder(com.orlovsky.mooc_platform.model.Student student){
-//        return Student.newBuilder()
-//                .setId(UUID.newBuilder().setValue(student.getId().toString()))
-//                .setFirstName(student.getFirstName())
-//                .setLastName(student.getLastName())
-//                .setDescription(student.getDescription());
-//    }
-//    public Author.Builder javaAuthorToGrpcAuthorBuilder(com.orlovsky.mooc_platform.model.Author author){
-//        return Author.newBuilder()
-//                .setId(UUID.newBuilder().setValue(author.getId().toString()).build())
-//                .setFirstName(author.getFirstName())
-//                .setLastName(author.getLastName())
-//                .setDescription(author.getDescription());
-//    }
-//
-//    public StudentDTO grpcToJavaStudentDto(StudentDto studentDto) {
-//        return new StudentDTO(
-//                null,
-//                studentDto.getFirstName(),
-//                studentDto.getLastName(),
-//                studentDto.getDescription()
-//        );
-//    }
-//    public AuthorDTO grpcToJavaAuthorDto(AuthorDto authorDto) {
-//        return new AuthorDTO(
-//                null,
-//                authorDto.getFirstName(),
-//                authorDto.getLastName(),
-//                authorDto.getDescription()
-//        );
-//    }
